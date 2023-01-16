@@ -7,3 +7,4 @@ nba戰績查詢
 - 引用JQuery製作右下快速回到頂端鈕
 - 嵌入youtube/賽爾提克twitter/nba戰報
 - 輸入日期, 可快速查詢當日nba戰績
+- 參考網站:https://frankghery.pixnet.net/blog/post/173099676
