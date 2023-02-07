@@ -110,28 +110,34 @@
                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                     allowfullscreen></iframe>
             </div>
+            <hr>
             <div class="col mt-3">
                 <b class="fs-3">查詢戰績</b>
                 <input id="nbadate" type="text" name="nbatoday" class="w-50" style="border-radius: 5px;height: 40px;"
                     placeholder="輸入日期範例:2022-12-15" onfocus="this.placeholder=''"
-                    onblur="this.placeholder='輸入日期範例:2022-12-15'">
-                    <button type="button" id="nbaBtn" class="btn btn-success">提出</button>
-                <script>
+                    onblur="this.placeholder='輸入日期範例:2023-02-05'">
+                <button type="button" id="nbaBtn" class="btn btn-success">提出</button>
+            </div>
+            <hr>
+            <div class="text-center">
+                <select name="" id="mySelect">
 
-                    $(function () {
-                        $("#nbaBtn").on("click", function () {
-                            let inputValue = $('#nbadate').val();
-                            console.log('nbadate', inputValue);
-                            let nbaAddress = "https://www.nba.com/games?date=";
-                            console.log(nbaAddress);
-                            location.href=nbaAddress+inputValue;
-                        })
-                    })
-                </script>
+                </select>
+                <button type="button" id="getSelectBtn" class="btn btn-success">查詢台灣該地氣候</button>
             </div>
-            <div class="ratio ratio-4x3 mt-3">
-                
-            </div>
+            <table class="table table-striped text-center">
+                <thead>
+                    <tr>
+                        <th>No</th>
+                        <th>位置</th>
+                        <th><span id="time1">time1</span></th>
+                        <th><span id="time2">time2</span></th>
+                        <th><span id="time3">time3</span></th>
+                    </tr>
+                </thead>
+                <tbody id="myTbody">
+
+                </tbody>
         </div>
     </div>
 </div>
@@ -154,6 +160,86 @@
                 $('#BackTop').stop().fadeOut(222);
             }
         }).scroll();
+
+        $("#nbaBtn").on("click", function () {
+            let inputValue = $('#nbadate').val();
+            console.log('nbadate', inputValue);
+            let nbaAddress = "https://www.nba.com/games?date=";
+            console.log(nbaAddress);
+            location.href = nbaAddress + inputValue;
+        })
+        const time1 = $('#time1');
+        const time2 = $('#time2');
+        const time3 = $('#time3');
+        const mySelect = $('#mySelect');
+        const getSelectBtn = $('#getSelectBtn');
+        const myTbody = $('#myTbody');
+
+        $.ajax({
+            url: "https://opendata.cwb.gov.tw/api/v1/rest/datastore/F-C0032-001?Authorization=CWB-23F8713D-7539-4A1D-90AC-9BD508DCFC67",
+            type: "get",
+            dataType: 'json',
+            success: function (res) {
+                console.log('res', res);
+                data = res.records.location;
+                console.log('data', data);
+
+                timeText1 = (data[0].weatherElement[0].time[0].startTime).substr(5, 11);
+                timeText2 = (data[0].weatherElement[0].time[1].startTime).substr(5, 11);
+                timeText3 = (data[0].weatherElement[0].time[2].startTime).substr(5, 11);
+
+                time1.text(timeText1);
+                time2.text(timeText2);
+                time3.text(timeText3);
+                $.each(data, function (key, value) {
+                    // console.log('value', value);
+                    let textOption = `
+                    <option value="${value.locationName}">${value.locationName}</option>
+                    `;
+                    // console.log(textOption);
+                    mySelect.append(textOption);
+                });
+
+                getSelectBtn.click(function () {
+                    myTbody.html('');
+                    
+                    let time1Text = `
+                                ${value.weatherElement[2].time[0].parameter.parameterName}-
+                                ${value.weatherElement[4].time[0].parameter.parameterName}
+                                `;
+
+                    let time2Text = `
+                                ${value.weatherElement[2].time[1].parameter.parameterName}-
+                                ${value.weatherElement[4].time[1].parameter.parameterName}
+                                `;
+
+                    let time3Text = `
+                                ${value.weatherElement[2].time[2].parameter.parameterName}-
+                                ${value.weatherElement[4].time[2].parameter.parameterName}
+                                `;
+                    let parameterName1 = value.weatherElement[0].time[0].parameterName;
+                    let parameterName2 = value.weatherElement[0].time[1].parameterName;
+                    let parameterName3 = value.weatherElement[0].time[2].parameterName;
+
+                    let parameterValue1 = value.weatherElement[0].time[0].parameterValue;
+                    let parameterValue2 = value.weatherElement[0].time[1].parameterValue;
+                    let parameterValue3 = value.weatherElement[0].time[2].parameterValue;
+                    
+                    let textContent = `
+                    <tr>
+                        <td>${key + 1}</td>
+                        <td>
+                            <img src="./day/${parameterValue1}.svg" alt="">&nbsp;
+
+                        </td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                        `
+                })
+            }
+        })
     });
 </script>
 
