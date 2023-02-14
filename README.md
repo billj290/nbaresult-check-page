@@ -8,3 +8,4 @@ nba戰績查詢
 - 嵌入youtube/賽爾提克twitter/nba戰報
 - 輸入日期, 可快速查詢當日nba戰績
 - 參考網站:https://frankghery.pixnet.net/blog/post/173099676
+- 串接中央氣象局api, 以下拉式選單選去地區, 可查看天氣預報
